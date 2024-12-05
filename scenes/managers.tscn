@@ -1,0 +1,28 @@
+[gd_scene load_steps=3 format=3 uid="uid://sby6h3vdl8dp"]
+
+[ext_resource type="Script" path="res://scripts/time/TimeManager.cs" id="1_godug"]
+[ext_resource type="Script" path="res://scripts/time/DayNightManager.cs" id="2_cxudx"]
+
+[node name="Managers" type="Node3D"]
+
+[node name="TimeManager" type="Node3D" parent="."]
+script = ExtResource("1_godug")
+dayLength = 0.1
+
+[node name="DayNightManager" type="Node3D" parent="." node_paths=PackedStringArray("sun", "moon")]
+script = ExtResource("2_cxudx")
+sun = NodePath("Sun")
+moon = NodePath("Moon")
+moonMaxEnergy = 0.2
+
+[node name="Sun" type="DirectionalLight3D" parent="DayNightManager"]
+light_color = Color(1, 0.95269, 0.847283, 1)
+light_angular_distance = 0.5
+shadow_enabled = true
+sky_mode = 1
+
+[node name="Moon" type="DirectionalLight3D" parent="DayNightManager"]
+light_color = Color(0.861598, 0.898047, 0.999997, 1)
+light_angular_distance = 0.5
+shadow_enabled = true
+sky_mode = 1

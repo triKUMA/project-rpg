@@ -1,0 +1,46 @@
+[gd_scene load_steps=9 format=3 uid="uid://dwxvp6uxrqp8i"]
+
+[ext_resource type="PackedScene" uid="uid://bt5d3s8p878tf" path="res://resources/player.tscn" id="1_h6vdk"]
+[ext_resource type="Script" path="res://scripts/enemies/EnemySpawner.cs" id="2_s1qo2"]
+[ext_resource type="PackedScene" uid="uid://b7ct4wc01js5m" path="res://resources/enemy.tscn" id="3_fdkye"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_48i84"]
+size = Vector2(1000, 1000)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xmw4h"]
+cull_mode = 2
+albedo_color = Color(0.327917, 0.409734, 0.154026, 1)
+
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_ty25y"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_4xgxo"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_hbeiw"]
+
+[node name="Root" type="Node3D"]
+
+[node name="Plane" type="StaticBody3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Plane"]
+mesh = SubResource("PlaneMesh_48i84")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_xmw4h")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Plane"]
+shape = SubResource("WorldBoundaryShape3D_ty25y")
+
+[node name="Player" parent="." instance=ExtResource("1_h6vdk")]
+
+[node name="Cube" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.93955, 0, 2.22026)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Cube"]
+shape = SubResource("BoxShape3D_4xgxo")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Cube"]
+mesh = SubResource("BoxMesh_hbeiw")
+
+[node name="EnemySpawner" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 8)
+script = ExtResource("2_s1qo2")
+enemyResource = ExtResource("3_fdkye")
