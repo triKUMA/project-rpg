@@ -1,5 +1,7 @@
 using System;
 using Godot;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace SaveSystem {
   public interface ISaveableBase {
@@ -9,7 +11,7 @@ namespace SaveSystem {
 
   public interface ISaveable : ISaveableBase {
     public abstract SaveData OnSaveGame();
-    public abstract void OnLoadGame(SaveData data);
+    public abstract void OnLoadGame(string data);
     public abstract void OnBeforeLoadGame();
   }
 
@@ -18,8 +20,8 @@ namespace SaveSystem {
     public abstract void OnLoadGame(T data);
   }
 
-  public partial class SaveableNode<T> : Node, ISaveable where T : SaveData {
-    public string Identifier { get; private set; } = Guid.NewGuid().ToString();
+  public partial class SaveableNode<T> : Node, ISaveable where T : SaveData, new() {
+    public string Identifier { get; private set; }
     public ISaveable Saveable => this;
 
     private ISaveable<T> saveableParent;
@@ -59,13 +61,15 @@ namespace SaveSystem {
       saveableParentNode.QueueFree();
     }
 
-    public void OnLoadGame(SaveData data) {
-      Identifier = data.Identifier;
-      if (data is T typedData) {
-        saveableParent.OnLoadGame(typedData);
-      } else {
-        throw new ArgumentException($"data could not be typed to '{typeof(T)}', as it is of type '{data.GetType()}'");
-      }
+    public void OnLoadGame(string _data) {
+      JObject data = JsonConvert.DeserializeObject<JObject>(_data);
+
+      T typedData = new();
+      typedData.ApplyData(data);
+
+      Identifier = typedData.Identifier;
+
+      saveableParent.OnLoadGame(typedData);
     }
 
     public ISaveable InstantiateSaveable() {
