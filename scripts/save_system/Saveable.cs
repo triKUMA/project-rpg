@@ -6,16 +6,17 @@ using Godot;
 public interface ISaveableBase {
   public abstract ISaveable Saveable { get; set; }
   public abstract ISaveable InstantiateSaveable();
-  public abstract void OnSaveGame(List<SaveData> data, string identifier);
+
 }
 
 public interface ISaveable : ISaveableBase {
-
+  public abstract SaveData OnSaveGame();
   public abstract void OnLoadGame(SaveData data);
   public abstract void OnBeforeLoadGame();
 }
 
 public interface ISaveable<T> : ISaveableBase where T : SaveData {
+  public abstract T OnSaveGame();
   public abstract void OnLoadGame(T data);
 }
 
@@ -48,7 +49,13 @@ public partial class SaveableNode<T> : Node, ISaveable where T : SaveData {
     SaveSystemManager.Instance.Saveables.Remove(this);
   }
 
-  public void OnSaveGame(List<SaveData> data, string _) => saveableParent.OnSaveGame(data, identifier);
+  public SaveData OnSaveGame() {
+    SaveData data = saveableParent.OnSaveGame();
+    data.Identifier = identifier;
+    data.ScenePath = ((Node)saveableParent).SceneFilePath;
+
+    return data;
+  }
 
   public void OnBeforeLoadGame() {
     Node saveableParentNode = (Node)saveableParent;

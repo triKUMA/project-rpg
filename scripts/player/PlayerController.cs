@@ -65,16 +65,12 @@ public partial class PlayerController : CharacterBody3D, ISaveable<PlayerSaveDat
     }
   }
 
-  public void OnSaveGame(List<SaveData> data, string identifier) {
-    PlayerSaveData saveData = new() {
-      Identifier = identifier,
-      ScenePath = SceneFilePath,
+  public PlayerSaveData OnSaveGame() {
+    return new() {
       Position = Position,
       Rotation = skin.RotationDegrees,
       CameraRotation = camera.Pivot.RotationDegrees,
     };
-
-    data.Add(saveData);
   }
 
   public void OnLoadGame(PlayerSaveData data) {

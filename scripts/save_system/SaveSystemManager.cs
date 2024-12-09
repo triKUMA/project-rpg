@@ -32,7 +32,7 @@ public partial class SaveSystemManager : Node {
 
     List<SaveData> saveablesData = new();
     foreach (ISaveable saveable in Saveables) {
-      saveable.OnSaveGame(saveablesData, null);
+      saveablesData.Add(saveable.OnSaveGame());
     }
     gameData.Data = saveablesData.ToArray();
 

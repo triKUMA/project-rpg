@@ -13,15 +13,11 @@ public partial class EnemyController : CharacterBody3D, ISaveable<TransformSaveD
   public override void _Process(double dDelta) {
   }
 
-  public void OnSaveGame(List<SaveData> data, string identifier) {
-    TransformSaveData saveData = new() {
-      Identifier = identifier,
-      ScenePath = SceneFilePath,
+  public TransformSaveData OnSaveGame() {
+    return new() {
       Position = Position,
       Rotation = RotationDegrees
     };
-
-    data.Add(saveData);
   }
 
   public void OnLoadGame(TransformSaveData data) {
