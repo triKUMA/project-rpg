@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Godot;
+using Newtonsoft.Json.Linq;
 
 namespace SaveSystem {
   public partial class SaveSystemManager : Node {
@@ -44,11 +45,10 @@ namespace SaveSystem {
     public void LoadGame() {
       ClearGame();
 
-      // GameSaveData gameData = ResourceLoader.Load<GameSaveData>(saveFilePath, null, ResourceLoader.CacheMode.IgnoreDeep);
       using FileAccess saveFile = FileAccess.Open(saveFilePath, FileAccess.ModeFlags.Read);
-      dynamic[] data = JsonConvert.DeserializeObject<dynamic[]>(saveFile.GetAsText());
-      foreach (dynamic saveData in data) {
-        PackedScene scene = ResourceLoader.Load<PackedScene>((string)saveData.ScenePath);
+      JObject[] data = JsonConvert.DeserializeObject<JObject[]>(saveFile.GetAsText());
+      foreach (JObject saveData in data) {
+        PackedScene scene = ResourceLoader.Load<PackedScene>(saveData.GetProperty<string>("ScenePath", null));
         Node instance = scene.Instantiate();
 
         if (instance is ISaveableBase saveableBase) {
