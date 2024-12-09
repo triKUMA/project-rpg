@@ -23,10 +23,11 @@ public partial class PlayerController : CharacterBody3D, ISaveable<PlayerSaveDat
   private PlayerSkinController skin;
 
   private SaveableNode<PlayerSaveData> saveable;
-  public ISaveableUntyped Saveable => saveable;
+  public ISaveable Saveable { get => saveable; set => saveable = (SaveableNode<PlayerSaveData>)value; }
+
 
   public override void _Ready() {
-    saveable = SaveableNode<PlayerSaveData>.Create(this);
+    InstantiateSaveable();
     camera = this.GetChildByType<CameraController>();
     skin = this.GetChildByType<PlayerSkinController>();
   }
@@ -82,8 +83,11 @@ public partial class PlayerController : CharacterBody3D, ISaveable<PlayerSaveDat
     camera.Pivot.RotationDegrees = data.CameraRotation;
   }
 
-  public void OnBeforeLoadGame() {
-    GetParent().RemoveChild(this);
-    QueueFree();
+  public ISaveable InstantiateSaveable() {
+    if (saveable == null) {
+      saveable = SaveableNode<PlayerSaveData>.Create(this);
+    }
+
+    return saveable;
   }
 }

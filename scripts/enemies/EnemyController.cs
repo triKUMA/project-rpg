@@ -4,10 +4,10 @@ using System.Collections.Generic;
 
 public partial class EnemyController : CharacterBody3D, ISaveable<TransformSaveData> {
   private SaveableNode<TransformSaveData> saveable;
-  public ISaveableUntyped Saveable => saveable;
+  public ISaveable Saveable { get => saveable; set => saveable = (SaveableNode<TransformSaveData>)value; }
 
   public override void _Ready() {
-    saveable = SaveableNode<TransformSaveData>.Create(this);
+    InstantiateSaveable();
   }
 
   public override void _Process(double dDelta) {
@@ -29,8 +29,11 @@ public partial class EnemyController : CharacterBody3D, ISaveable<TransformSaveD
     RotationDegrees = data.Rotation;
   }
 
-  public void OnBeforeLoadGame() {
-    GetParent().RemoveChild(this);
-    QueueFree();
+  public ISaveable InstantiateSaveable() {
+    if (saveable == null) {
+      saveable = SaveableNode<TransformSaveData>.Create(this);
+    }
+
+    return saveable;
   }
 }
