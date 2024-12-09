@@ -1,10 +1,9 @@
 using Godot;
-using System;
-using System.Collections.Generic;
+using SaveSystem;
 
 public partial class EnemyController : CharacterBody3D, ISaveable<TransformSaveData> {
   private SaveableNode<TransformSaveData> saveable;
-  public ISaveable Saveable { get => saveable; set => saveable = (SaveableNode<TransformSaveData>)value; }
+  public ISaveable Saveable => saveable;
 
   public override void _Ready() {
     InstantiateSaveable();

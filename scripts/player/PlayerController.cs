@@ -1,9 +1,5 @@
 using Godot;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using Range = Godot.Range;
+using SaveSystem;
 
 public partial class PlayerController : CharacterBody3D, ISaveable<PlayerSaveData> {
   [Export] private float movementSpeed = 6f;
@@ -23,7 +19,7 @@ public partial class PlayerController : CharacterBody3D, ISaveable<PlayerSaveDat
   private PlayerSkinController skin;
 
   private SaveableNode<PlayerSaveData> saveable;
-  public ISaveable Saveable { get => saveable; set => saveable = (SaveableNode<PlayerSaveData>)value; }
+  public ISaveable Saveable => saveable;
 
 
   public override void _Ready() {

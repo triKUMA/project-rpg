@@ -1,5 +1,7 @@
 using Godot;
 
-public partial class GameSaveData : Resource {
-  [Export] public SaveData[] Data;
+namespace SaveSystem {
+  public partial class GameSaveData : Resource {
+    [Export] public SaveData[] Data;
+  }
 }
