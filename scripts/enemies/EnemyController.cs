@@ -1,21 +1,36 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
-public partial class EnemyController : CharacterBody3D {
+public partial class EnemyController : CharacterBody3D, ISaveable<TransformSaveData> {
+  private SaveableNode<TransformSaveData> saveable;
+  public ISaveableUntyped Saveable => saveable;
+
   public override void _Ready() {
-    TimeManager.Instance.OnHourUpdated += Despawn;
+    saveable = SaveableNode<TransformSaveData>.Create(this);
   }
 
-  private void Despawn(ulong hour) {
-    if (hour == 6ul) {
-      QueueFree();
-    }
+  public override void _Process(double dDelta) {
   }
 
-  public override void _Process(double delta) {
+  public void OnSaveGame(List<SaveData> data, string identifier) {
+    TransformSaveData saveData = new() {
+      Identifier = identifier,
+      ScenePath = SceneFilePath,
+      Position = Position,
+      Rotation = RotationDegrees
+    };
+
+    data.Add(saveData);
   }
 
-  public override void _ExitTree() {
-    TimeManager.Instance.OnHourUpdated -= Despawn;
+  public void OnLoadGame(TransformSaveData data) {
+    Position = data.Position;
+    RotationDegrees = data.Rotation;
+  }
+
+  public void OnBeforeLoadGame() {
+    GetParent().RemoveChild(this);
+    QueueFree();
   }
 }

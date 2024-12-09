@@ -1,24 +1,23 @@
 using Godot;
-using System;
-using System.ComponentModel.DataAnnotations;
 
 public partial class CameraController : Camera3D {
   [Export] public float RotationSpeed = 5f;
   [Export] public Vector2 RotationClamp = new Vector2(-30f, 60f);
 
+  public Node3D Pivot { get; private set; }
+
   private Vector2 inputDirection = Vector2.Zero;
-  private Node3D pivot;
 
   public override void _Ready() {
-    pivot = (Node3D)GetParent();
+    Pivot = (Node3D)GetParent();
   }
 
   public override void _Process(double doubleDelta) {
     float delta = (float)doubleDelta;
-    pivot.RotationDegrees = new Vector3(
-      Mathf.Clamp(pivot.RotationDegrees.X - inputDirection.Y * delta, -90f - RotationClamp.X, 90f - RotationClamp.Y),
-      pivot.RotationDegrees.Y - inputDirection.X * delta,
-      pivot.RotationDegrees.Z
+    Pivot.RotationDegrees = new Vector3(
+      Mathf.Clamp(Pivot.RotationDegrees.X - inputDirection.Y * delta, -90f - RotationClamp.X, 90f - RotationClamp.Y),
+      Pivot.RotationDegrees.Y - inputDirection.X * delta,
+      Pivot.RotationDegrees.Z
     );
 
     inputDirection = Vector2.Zero;
