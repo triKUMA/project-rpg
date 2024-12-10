@@ -8,10 +8,8 @@ public class TransformSaveData : SaveData {
 
   public override TransformSaveData ApplyData(JObject data) {
     base.ApplyData(data);
-
     Position = data.GetPropertyOrDefault("Position", Vector3.Zero);
     Rotation = data.GetPropertyOrDefault("Rotation", Vector3.Zero);
-
     return this;
   }
 }
