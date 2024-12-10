@@ -53,6 +53,11 @@ namespace SaveSystem {
       data.Identifier = Identifier;
       data.ScenePath = ((Node)saveableParent).SceneFilePath;
 
+      if (data._External != null) {
+        string[] extSplit = data._External.Split('.');
+        data._External = extSplit.AsSpan()[..Mathf.Max(extSplit.Length - 1, 1)].ToArray().Join("") + $"-{data.Identifier.ReplaceN("-", "")}." + extSplit[extSplit.Length - 1];
+      }
+
       return data;
     }
 
