@@ -22,7 +22,7 @@ namespace SaveSystem {
   }
 
   public partial class SaveableNode<T> : Node, ISaveable where T : SaveData, new() {
-    public string Identifier { get; private set; }
+    public string Identifier { get; private set; } = Guid.NewGuid().ToString();
     public ISaveable Saveable => this;
 
     private ISaveable<T> saveableParent;

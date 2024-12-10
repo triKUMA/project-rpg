@@ -5,9 +5,14 @@ using SaveSystem;
 public class PlayerSaveData : TransformSaveData {
   public Vector3 CameraRotation;
 
+  public PlayerSaveData() {
+    _External = "user://player.json";
+  }
+
   public override PlayerSaveData ApplyData(JObject data) {
     base.ApplyData(data);
     CameraRotation = data.GetPropertyOrDefault("CameraRotation", new Vector3(-25, -180, 0));
+
     return this;
   }
 }

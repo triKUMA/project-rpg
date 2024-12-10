@@ -6,7 +6,7 @@ using Newtonsoft.Json.Linq;
 
 namespace SaveSystem {
   public partial class SaveSystemManager : Node {
-    [Export] private string saveFilePath = "user://savegame.json";
+    [Export] private string saveFilePath = "user://game.json";
 
     public static SaveSystemManager Instance { get; private set; }
     public List<ISaveable> Saveables { get; private set; } = new();
@@ -32,12 +32,36 @@ namespace SaveSystem {
 
     public void SaveGame() {
       List<dynamic> data = new();
-      foreach (ISaveable saveable in Saveables) data.Add(saveable.OnSaveGame());
+      List<dynamic> externalData = new();
+      foreach (ISaveable saveable in Saveables) {
+        SaveData saveData = saveable.OnSaveGame();
+        if (saveData._External != null) {
+          ExternalSaveData externalRef = new() {
+            _External = saveData._External
+          };
+          data.Add(externalRef);
+
+          externalData.Add(saveData);
+        } else {
+          data.Add(saveData);
+        }
+      }
 
       string dataJson = JsonConvert.SerializeObject(data, Formatting.Indented);
 
-      using FileAccess saveFile = FileAccess.Open(saveFilePath, FileAccess.ModeFlags.Write);
-      saveFile.StoreString(dataJson);
+      using (FileAccess saveFile = FileAccess.Open(saveFilePath, FileAccess.ModeFlags.Write)) {
+        saveFile.StoreString(dataJson);
+      }
+
+      foreach (dynamic extData in externalData) {
+        string externalFilePath = extData._External;
+        extData._External = null;
+        string extDataJson = JsonConvert.SerializeObject(extData, Formatting.Indented);
+
+        using (FileAccess extSaveFile = FileAccess.Open(externalFilePath, FileAccess.ModeFlags.Write)) {
+          extSaveFile.StoreString(extDataJson);
+        }
+      }
     }
 
     public void LoadGame() {
@@ -48,7 +72,16 @@ namespace SaveSystem {
         data = JsonConvert.DeserializeObject<JObject[]>(saveFile.GetAsText());
       }
 
-      foreach (JObject saveData in data) {
+      for (int i = 0; i < data.Length; i++) {
+        JObject saveData = data[i];
+        string externalFilePath = saveData.GetPropertyOrDefault<string>("_External", null);
+        if (externalFilePath != null) {
+          using (FileAccess saveFile = FileAccess.Open(externalFilePath, FileAccess.ModeFlags.Read)) {
+            saveData = JsonConvert.DeserializeObject<JObject>(saveFile.GetAsText());
+          }
+          saveData.Remove("_External");
+          saveData.Add("_External", externalFilePath);
+        }
         PackedScene scene = ResourceLoader.Load<PackedScene>(saveData.GetPropertyOrDefault<string>("ScenePath", null));
         Node instance = scene.Instantiate();
 
