@@ -10,6 +10,7 @@ namespace SaveSystem {
   }
 
   public interface ISaveable : ISaveableBase {
+    public abstract string Identifier { get; }
     public abstract SaveData OnSaveGame();
     public abstract void OnLoadGame(string data);
     public abstract void OnBeforeLoadGame();
@@ -64,8 +65,7 @@ namespace SaveSystem {
     public void OnLoadGame(string _data) {
       JObject data = JsonConvert.DeserializeObject<JObject>(_data);
 
-      T typedData = new();
-      typedData.ApplyData(data);
+      T typedData = (T)new T().ApplyData(data);
 
       Identifier = typedData.Identifier;
 

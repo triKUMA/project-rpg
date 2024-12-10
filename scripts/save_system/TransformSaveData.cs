@@ -6,9 +6,12 @@ public class TransformSaveData : SaveData {
   public Vector3 Position;
   public Vector3 Rotation;
 
-  public override void ApplyData(JObject data) {
+  public override TransformSaveData ApplyData(JObject data) {
     base.ApplyData(data);
-    Position = data.GetProperty("Position", Vector3.Zero);
-    Rotation = data.GetProperty("Rotation", Vector3.Zero);
+
+    Position = data.GetPropertyOrDefault("Position", Vector3.Zero);
+    Rotation = data.GetPropertyOrDefault("Rotation", Vector3.Zero);
+
+    return this;
   }
 }

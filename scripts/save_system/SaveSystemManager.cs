@@ -32,9 +32,7 @@ namespace SaveSystem {
 
     public void SaveGame() {
       List<dynamic> data = new();
-      foreach (ISaveable saveable in Saveables) {
-        data.Add(saveable.OnSaveGame());
-      }
+      foreach (ISaveable saveable in Saveables) data.Add(saveable.OnSaveGame());
 
       string dataJson = JsonConvert.SerializeObject(data, Formatting.Indented);
 
@@ -45,10 +43,13 @@ namespace SaveSystem {
     public void LoadGame() {
       ClearGame();
 
-      using FileAccess saveFile = FileAccess.Open(saveFilePath, FileAccess.ModeFlags.Read);
-      JObject[] data = JsonConvert.DeserializeObject<JObject[]>(saveFile.GetAsText());
+      JObject[] data = new JObject[] { };
+      using (FileAccess saveFile = FileAccess.Open(saveFilePath, FileAccess.ModeFlags.Read)) {
+        data = JsonConvert.DeserializeObject<JObject[]>(saveFile.GetAsText());
+      }
+
       foreach (JObject saveData in data) {
-        PackedScene scene = ResourceLoader.Load<PackedScene>(saveData.GetProperty<string>("ScenePath", null));
+        PackedScene scene = ResourceLoader.Load<PackedScene>(saveData.GetPropertyOrDefault<string>("ScenePath", null));
         Node instance = scene.Instantiate();
 
         if (instance is ISaveableBase saveableBase) {

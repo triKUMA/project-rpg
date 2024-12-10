@@ -7,9 +7,10 @@ namespace SaveSystem {
     public string Identifier;
     public string ScenePath;
 
-    public virtual void ApplyData(JObject data) {
-      Identifier = data.GetProperty("Identifier", Guid.NewGuid().ToString());
-      ScenePath = data.GetProperty<string>("ScenePath", null);
+    public virtual SaveData ApplyData(JObject data) {
+      Identifier = data.GetPropertyOrDefault("Identifier", Guid.NewGuid().ToString());
+      ScenePath = data.GetPropertyOrDefault<string>("ScenePath", null);
+      return this;
     }
   }
 }
