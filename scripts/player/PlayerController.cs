@@ -1,4 +1,5 @@
 using Godot;
+using HealthSystem;
 using Newtonsoft.Json.Linq;
 using SaveSystem;
 
@@ -17,7 +18,7 @@ public class PlayerSaveData : TransformSaveData {
   }
 }
 
-public partial class PlayerController : CharacterBody3D, ISaveable<PlayerSaveData> {
+public partial class PlayerController : CharacterBody3D, ISaveable<PlayerSaveData>, IDamageable {
   [Export] private float movementSpeed = 6f;
   [Export] private float acceleration = 40f;
   [Export] private float jumpImpulse = 12f;
@@ -36,15 +37,19 @@ public partial class PlayerController : CharacterBody3D, ISaveable<PlayerSaveDat
 
   private SaveableNode<PlayerSaveData> saveable;
   public ISaveable Saveable => saveable;
+  private HealthController healthController;
 
-
-  public override void _Ready() {
+  public override void _EnterTree() {
     InstantiateSaveable();
-    camera = this.GetChildByType<CameraController>();
-    skin = this.GetChildByType<PlayerSkinController>();
   }
 
-  public override void _Process(double delta) {
+  public override void _Ready() {
+    camera = this.GetChildByType<CameraController>();
+    skin = this.GetChildByType<PlayerSkinController>();
+    healthController = this.GetChildByType<HealthController>();
+  }
+
+  public override void _Process(double dDelta) {
     var rawInput = Input.GetVector("move_left", "move_right", "move_backwards", "move_forwards");
 
     var forward = camera.GlobalBasis.Z;
@@ -57,8 +62,8 @@ public partial class PlayerController : CharacterBody3D, ISaveable<PlayerSaveDat
     isStartingJump |= Input.IsActionJustPressed("jump") && IsOnFloor();
   }
 
-  public override void _PhysicsProcess(double doubleDelta) {
-    float delta = (float)doubleDelta;
+  public override void _PhysicsProcess(double dDelta) {
+    float delta = (float)dDelta;
 
     var yVelocity = Velocity.Y;
     Velocity = new Vector3(Velocity.X, 0f, Velocity.Z);
@@ -98,4 +103,13 @@ public partial class PlayerController : CharacterBody3D, ISaveable<PlayerSaveDat
 
     return saveable;
   }
+
+  public void Damage(float amount) {
+    healthController.Damage(amount);
+  }
+
+  public void Heal(float amount) {
+    healthController.Heal(amount);
+  }
+
 }

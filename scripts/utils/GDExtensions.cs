@@ -2,9 +2,7 @@ using System.Linq;
 using Godot;
 
 public static class GDExtensions {
-  //acts like Unity's GetComponent<T> / GetComponentInChildren<T>
-  public static T GetChildByType<T>(this Node node, bool recursive = true)
-      where T : Node {
+  public static T GetChildByType<T>(this Node node, bool recursive = true) {
     int childCount = node.GetChildCount();
 
     for (int i = 0; i < childCount; i++) {
@@ -19,12 +17,10 @@ public static class GDExtensions {
       }
     }
 
-    return null;
+    return default;
   }
 
-  //acts like Unity's GetComponentInParent<T>
-  public static T GetParentByType<T>(this Node node)
-      where T : Node {
+  public static T GetParentByType<T>(this Node node) {
     Node parent = node.GetParent();
     if (parent != null) {
       if (parent is T parentT) {
@@ -34,7 +30,7 @@ public static class GDExtensions {
       }
     }
 
-    return null;
+    return default;
   }
 
   /// <summary>

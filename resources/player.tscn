@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://bt5d3s8p878tf"]
+[gd_scene load_steps=8 format=3 uid="uid://bt5d3s8p878tf"]
 
 [ext_resource type="Script" path="res://scripts/player/PlayerController.cs" id="1_jxmdr"]
 [ext_resource type="Script" path="res://scripts/camera/CameraController.cs" id="2_1dtay"]
 [ext_resource type="PackedScene" uid="uid://pidmuupqngih" path="res://models/Y Bot.fbx" id="2_75jxc"]
 [ext_resource type="Script" path="res://scripts/player/PlayerSkinController.cs" id="2_l3ddx"]
+[ext_resource type="Script" path="res://scripts/combat/HealthController.cs" id="5_ui1ka"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_r1t0h"]
 radius = 0.25
@@ -32,3 +33,7 @@ script = ExtResource("2_1dtay")
 
 [node name="CameraPivot" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+
+[node name="HealthController" type="Node3D" parent="."]
+script = ExtResource("5_ui1ka")
+baseMaxHealth = 100.0

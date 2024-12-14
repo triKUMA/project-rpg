@@ -5,7 +5,7 @@ public partial class EnemyController : CharacterBody3D, ISaveable<TransformSaveD
   private SaveableNode<TransformSaveData> saveable;
   public ISaveable Saveable => saveable;
 
-  public override void _Ready() {
+  public override void _EnterTree() {
     InstantiateSaveable();
   }
 
